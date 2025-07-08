@@ -10,7 +10,32 @@
     <!-- import react  -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.28.0/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+
+    <!-- component details -->
+    <script type="text/babel">
+        function Animali() {
+
+            const animals = ['Pappagallo', 'Gatto', 'Cane', 'Riccio']
+            return (
+                <details>
+                    <summary>Animali</summary>
+                    <ul>
+                        {animals && animals.map((a, index) => <li key={index} >{a}</li>)}
+                    </ul>
+                </details>
+            )
+        }
+    </script>
+
+    <!-- react  -->
+    <script type="text/babel">
+        const { createRoot } = ReactDOM;
+        const listaAnimali = document.querySelector('.lista-animali');
+        const root = createRoot(listaAnimali);
+        root.render(<Animali />);
+    </script>
 
     <!-- stylesheet  -->
     <link rel="stylesheet" href="style.css">
@@ -32,3 +57,13 @@
 </body>
 
 </html>
+
+<!-- 
+📌 Milestone 1: Inserire un Componente React
+Monta un componente React all’interno dell’elemento con classe .lista-animali.
+
+Il componente deve includere:
+Un elemento <details> con titolo "Animali", che contiene:
+Una lista <ul> statica che viene creata a partire da un array di stringhe (animals) dove ciascuna stringa rappresenta il nome di un animale.
+
+Obiettivo: Mostrare la struttura base della lista di animali con un <details> che può essere espanso o contratto. -->
