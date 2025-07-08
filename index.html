@@ -48,13 +48,41 @@
 
             const [animalName, setAnimalName] = useState('');
 
-            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+            const [loader, setLoader] = useState(false);
 
-            function addAnimal() {
-                if (!animalName) return
-                setAnimals(curr => [...curr, animalName]);
-                setAnimalName('');
-                setShow(false);
+            const [errorMessage, setErrorMessage] = useState('');
+
+
+            async function addAnimal() {
+                if (!animalName.trim()) return;
+                setLoader(true);
+
+                try {
+                    const response = await fetch(`http://localhost:3333/animals?search=${animalName}`);
+                    const [animalData] = await response.json();
+
+                    if (!animalData) {
+                        throw new Error('Nessun animale trovato');
+                    }
+
+                    const animal = {
+                        name: animalData.name || 'Nome non trovato',
+                        description: animalData.description || 'Descrizione non disponibile',
+                        image: animalData.image || null,
+
+                    }
+
+                    setAnimals(curr => [...curr, animal]);
+                } catch (err) {
+                    console.error(err);
+                    const message = err.message === 'Nessun animale trovato' ? 'Nessun animale trovato' : "Errore durante la ricerca dell\'animale"
+                    setErrorMessage(err.message);
+                } finally {
+
+                    setAnimalName('');
+                    setShow(false);
+                    setLoader(false);
+                }
             }
 
             return (
@@ -62,9 +90,15 @@
                     <button onClick={() => setShow(true)}>Aggiungi animale</button>
                     <details>
                         <summary>Animali</summary>
-                        <ul>
-                            {animals && animals.map((a, i) => <li key={i}>{a}</li>)}
-                        </ul>
+                        <div>
+                            {errorMessage && <p>{errorMessage}</p>}
+                            {animals && animals.map((a, i) =>
+                                <div key={i}>
+                                    <h3>{a.name}</h3>
+                                    {a.image && <img src={a.image} alt={a.name} />}
+                                    <p>{a.description}</p>
+                                </div>)}
+                        </div>
                     </details>
 
                     <Modal
@@ -72,13 +106,14 @@
                         onClose={() => setShow(false)}
                         onConfirm={addAnimal}
                         title="Aggiungi animale"
-                        content={
+                        content={<>
                             <input
                                 type="text"
                                 value={animalName}
                                 onChange={e => setAnimalName(e.target.value)}
                             />
-                        }
+                            {loader && <p>Caricamento in corso...</p>}
+                        </>}
                     />
                 </>
             )
