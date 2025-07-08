@@ -27,7 +27,7 @@
             function addAnimal() {
                 const randomIndex = Math.floor(Math.random() * animalsChoices.length);
                 const newAnimal = animalsChoices[randomIndex];
-                setAnimals([...animals, newAnimal]);
+                setAnimals(curr => [...curr, newAnimal]);
             }
 
             return (
